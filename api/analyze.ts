@@ -29,7 +29,7 @@ export default async function handler(
     });
 
     const response = await ai.models.generateContent({
-      model:"gemini-1.5-flash-latest",
+      model: "gemini-1.5-flash",
       contents: `Audit this news claim for veracity:
 
 INPUT: "${newsText}"
