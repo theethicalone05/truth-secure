@@ -22,11 +22,28 @@ export const analyzeNews = async (
       body: JSON.stringify({ newsText }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new AnalysisError("Analysis failed", "UNKNOWN");
+      throw new AnalysisError(
+        data?.error || "Analysis failed",
+        "UNKNOWN"
+      );
     }
 
-    return await response.json();
+    // Parse Gemini JSON string safely
+    let parsed;
+    try {
+      parsed =
+        typeof data.result === "string"
+          ? JSON.parse(data.result)
+          : data.result;
+    } catch {
+      throw new AnalysisError("Invalid AI response format", "UNKNOWN");
+    }
+
+    return parsed as AnalysisResult;
+
   } catch (error: any) {
     throw new AnalysisError(
       error.message || "System error",
